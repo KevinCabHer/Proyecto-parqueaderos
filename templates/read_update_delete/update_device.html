@@ -1,0 +1,69 @@
+{% extends 'layouts/base_sinmenu.html' %}
+
+{% block 'title' %}Registros{% endblock  %}
+
+{% block 'content' %}
+<div class = "container" style = "margin: 150px 300px;">
+    <div class = "container" style="margin: 150px;">
+    </div>
+    <h2>Equipos</h2>
+    <form action="{% url 'u_dev' dev.id_device %}"method="POST">
+        {% csrf_token %}
+    <div class="mb-3">
+        <select name = "tipo_equipo" class="form-select" aria-label="Default select example" style = "width: 700px">
+            
+            {% for device in type_devices %}
+                {% if device.type_name == select_type %}
+                <option selected value="{{device.id_device_type}}">{{device.type_name}}</option>
+                {% else %}
+                <option value="{{device.id_device_type}}">{{device.type_name}}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <input type="text" value = "{{dev.ip_from}}" name = "ip" class="form-control" id="exampleInputPassword1" placeholder = "Ip" style = "width: 700px">
+    </div>
+    
+    <div class="mb-3">
+        <select class="form-select" name = "procesador" aria-label="Default select example" style = "width: 700px">
+            {% for cpu in cpus %}
+                {% if cpu.id_cpu == cpu_ %}
+                <option selected value="{{cpu.id_cpu}}">{{ cpu.cpu_name }}</option>
+                {% else %}
+                <option value="{{cpu.id_cpu}}">{{ cpu.cpu_name }}</option>
+                {% endif %}
+            {% endfor %}
+            </select>
+    </div>
+
+    <div class="mb-3">
+        <select class="form-select" name = "so" aria-label="Default select example" style = "width: 700px">
+            {% for s in so %}
+                {% if so_ == s.id_os %}
+                    <option selected value="{{s.id_os}}">{{s.os_name}}</option>
+                {% else %}
+                    <option value="{{s.id_os}}">{{s.os_name}}</option>
+                {% endif %}
+            {% endfor %}   
+            </select>
+    </div>
+
+
+    <div class="mb-3">
+        <select class="form-select" name = "zone_" aria-label="Default select example" style = "width: 700px">
+            <option selected>Seleccione una zona</option>
+            {% for zone in zones %}
+                {% if zone_ == zone.id_zone %}
+                <option selected value="{{zone.id_zone}}">{{zone.zone_name}}</option>
+                {% endif %}
+                <option selected value="{{zone.id_zone}}">{{zone.zone_name}}</option>
+            {% endfor %}
+            </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock  %}

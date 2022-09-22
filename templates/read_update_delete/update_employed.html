@@ -1,0 +1,37 @@
+{% extends 'layouts/base_sinmenu.html' %}
+
+{% block 'title' %}Registros{% endblock  %}
+
+{% block 'content' %}
+<div class = "container" style = "margin: 150px 300px;">
+        <div class = "container" style="margin: 150px;">
+        
+        </div>
+
+        <form action= "{% url 'u_emp' empl.id_people %}" method="POST">
+            {% csrf_token %}
+        
+            <h2>Empleados</h2>
+            
+            <div class="mb-3">
+                <input type="email" value = "{{empl.email_people}}" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Email" style = "width: 700px">
+            </div>
+
+            <div class="mb-3">
+                <input type="text" value = "{{empl.name_people}}" class="form-control" id="nombre" name="nombre" placeholder = "Nombres" style = "width: 700px">
+            </div>
+
+            <div class="mb-3">
+                <select class="form-select" name="organizacion" aria-label="Default select example" style = "width: 700px">
+                    <option selected value="default">Seleccione una organización</option>
+                    <option value="1">Controles Inteligentes</option>
+                    <option value="2">Borealix</option>
+                    <option value="3">Desarrollo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</div>
+{% endblock  %}

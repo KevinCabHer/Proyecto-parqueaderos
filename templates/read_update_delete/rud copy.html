@@ -1,0 +1,61 @@
+{% extends 'layouts/base_sinmenu.html' %}
+
+{% block 'content' %}
+
+<div class = "container" style = "display:flex; flex-direction:column;">
+
+    <div class = "container" style="margin: 150px;">
+    </div>
+
+<div class = "container" style="display: flex; align-items: center; justify-content: center; z-index: 40;">
+    <div style="display: flex; flex-direction: column; ">
+        <h2>Organizaciones</h2>
+        {% for org in organizaciones %}
+        <div style="display: flex; padding: 5px;">
+            <p style = "padding: 10px; margin: 10px;">{{ org.org_name }}</p>
+            <form action = "{% url 'update_org' org.id_org %}" method="POST">
+                {% csrf_token %}
+                <button class = "btn btn-success" style = "padding: 5px 10px; margin: 10px;  ">Modificar</button>
+            </form>
+            <form action = "{% url 'delete_org' org.id_org %}" method="POST">
+                {% csrf_token %}
+                <button class = "btn btn-danger" style = "padding: 5px 10px; margin: 10px;  ">Borrar</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class = "container" style="display: flex; align-items: center; justify-content: center">
+    <div style="display: flex; flex-direction: column; ">
+        <h2>Personas</h2>   
+        {% for empl in empleados %}
+            <div style="display: flex;">
+                <p>{{ empl.name_people }}</p>
+            
+                <form action = "{% url 'delete_employed' empl.id_people %}" method="POST">
+                    {% csrf_token %}
+                    <button class = "btn btn-danger" style = "padding: 5px 10px; margin: 10px;  ">Borrar</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+      
+<div class = "container" style="display: flex; align-items: center; justify-content: center">
+    <div style="display: flex; flex-direction: column; "> 
+        <h2>Equipos</h2> 
+        {% for dev in equipos %}
+        <div style="display: flex;">
+            <p>{{ dev.ip_from }}</p>
+            <form action = "{% url 'delete_device' dev.id_device %}" method="POST">
+                {% csrf_token %}
+                <button class = "btn btn-danger" style = "padding: 5px 10px; margin: 10px;  ">Borrar</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div> 
+</div>
+
+</div>
+{% endblock  %}

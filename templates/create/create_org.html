@@ -1,0 +1,47 @@
+{% extends 'layouts/base.html' %}
+
+{% block 'title' %}Registros{% endblock  %}
+
+{% block 'content' %}
+
+<div class = "container" style = "margin: 150px 300px;">
+
+    <div class = "container" style="margin: 150px;">
+    </div>
+    
+    <h2>Organizaciones</h2>
+    
+    <form action="/neworg/" method="POST">
+        {% csrf_token %}
+   
+        <div class="mb-3">
+            <input type="text" name = "name" class="form-control" id="name" placeholder = "Nombre de la Organización" style = "width: 700px">
+        </div>
+        
+        <div class="mb-3">
+            <input type="text" name = "id_tag" class="form-control" id="id_tag" placeholder = "Id Tag" style = "width: 700px">
+        </div>
+
+        <div class="mb-3">
+            <input type="text" name = "country" class="form-control" id="coutry" placeholder = "Pais" style = "width: 700px">
+        </div>
+
+        <div class="mb-3">
+            <input type="text" name = "city" class="form-control" id="city" placeholder = "Ciudad" style = "width: 700px">
+        </div>
+
+        <div class="mb-3">
+            <input type="text" name = "address" class="form-control" id="address" placeholder = "Dirección" style = "width: 700px">
+        </div>
+
+        <div class="mb-3">
+            <input type="text" name = "postal" class="form-control" id="postal" placeholder = "Codigo Postal" style = "width: 700px">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Guardar</button>
+
+    </form>
+
+</div>
+
+{% endblock  %}

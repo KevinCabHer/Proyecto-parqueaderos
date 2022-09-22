@@ -1,0 +1,93 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;400;600&display=swap');
+    </style>
+    <link href="{% static '/css/organizaciones.css' %}" type="text/css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav class="navbar navbar-expand-lg navbar-light barra_nav">
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a aria-current="page" href="{% url 'inicio' %}">Organizaciones</a>
+              </li>
+              <li class="nav-item">
+                <a aria-current="page" href="#">Sitios</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <!-- TITULO -->
+    <div class="title1">
+        <h3>Organizaciones</h3>
+    </div>
+
+
+    <!-- CAMPO DE BUSQUEDA -->
+    <div class = "contenedor_b">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Nombre de la Organizacion" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <button class="btn" type="button">Buscar</button>
+        </div>
+    </div>
+
+      <!-- TABLA DE ITEMS -->
+
+        <table class="table" style="background-color: white; ">
+          <thead>
+            <tr>
+              <th style="text-align: center;">Id</th>
+              <th style="text-align: center;">Nombre</th>
+              <th style="text-align: center">Tax ID</th>
+              <th style="text-align: center;">Pais</th>
+              <th style="text-align: center;">Ciudad</th>
+              <th style="text-align: center;">Dirección</th>
+              <th style="text-align: center;">Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for org in organizaciones  %}
+            <tr>
+              <th scope="row" style="text-align: center;">{{ org.id_org }}</th>
+              <td align="center">{{ org.org_name }}</td>
+              <td align="center">{{ org.org_tax_id}}</td>
+              <td align="center">{{org.country}}</td>
+              <td align="center">{{org.city}}</td>
+              <td align="center">{{org.addres}}</td>
+              <td align="center">
+                <form action = "{% url 'tabs_organizacion' org.id_org %}" method="POST">
+                  {% csrf_token %}
+                <button class="btn btn-outline-primary">Consultar</button>
+                </form>
+              
+              </td>
+            </tr>         
+            {% endfor %}
+          </tbody>
+        </table>
+    
+
+    <!-- BOTON AGREGAR  -->
+    <div class = "boton">
+      <form action = "{% url 'form_organizacion' %}" method = "POST">
+        {% csrf_token %}
+        <button class="btn" >Agregar</button>
+      <form>
+     </div>
+
+</body>
+</html>
