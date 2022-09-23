@@ -23,26 +23,28 @@
                 <a aria-current="page" href="{% url 'inicio' %}">Organizaciones</a>
               </li>
               <li class="nav-item">
-                <a aria-current="page" href="#">Sitios</a>
+                <a aria-current="page" href="{% url 'sitios' %}">Sitios</a>
+              </li>
+              <li class="nav-item">
+                <a aria-current="page" href="{% url 'personas' %}">Personas</a>
+              </li>
+              <li class="nav-item">
+                <a aria-current="page" href="{% url 'dispositivos' %}">Dispositivos</a>
               </li>
             </ul>
           </div>
         </div>
       </nav>
 
-    <!-- FORMULARIO ORGANIZACIONES-->
+    <!-- FORMULARIO SITIOS-->
 
 <div class="contenedor">
     <div class="contenedor_form">
-        <h4>Agregar información de la Organización: </h4>
-        <form action="{% url 'agregar_org' %}" method="POST">
+        <h4>Agregar información del nuevo sitio: </h4>
+        <form action="{% url 'agregar_site' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">
-            <input type="text" name = "name" class="form-control" placeholder="Nombre de la Organización">
-            </div>
-
-            <div class="mb-3">
-                <input type="text" name = "id_tag" class="form-control" placeholder="NIT">
+            <input type="text" name = "name" class="form-control" placeholder="Nombre del sitio">
             </div>
 
             <div class="mb-3">

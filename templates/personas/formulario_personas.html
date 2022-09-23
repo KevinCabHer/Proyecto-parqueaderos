@@ -23,47 +23,46 @@
                 <a aria-current="page" href="{% url 'inicio' %}">Organizaciones</a>
               </li>
               <li class="nav-item">
-                <a aria-current="page" href="#">Sitios</a>
+                <a aria-current="page" href="{% url 'sitios' %}">Sitios</a>
+              </li>
+              <li class="nav-item">
+                <a aria-current="page" href="{% url 'personas' %}">Personas</a>
+              </li>
+              <li class="nav-item">
+                <a aria-current="page" href="{% url 'dispositivos' %}">Dispositivos</a>
               </li>
             </ul>
           </div>
         </div>
       </nav>
 
-    <!-- FORMULARIO ORGANIZACIONES-->
+    <!-- FORMULARIO SITIOS-->
 
 <div class="contenedor">
     <div class="contenedor_form">
-        <h4>Agregar información de la Organización: </h4>
-        <form action="{% url 'agregar_org' %}" method="POST">
+        <h4>Agregar información nueva persona: </h4>
+        <form action="{% url 'agregar_persona' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">
-            <input type="text" name = "name" class="form-control" placeholder="Nombre de la Organización">
+              <input type="text" name = "name" class="form-control" placeholder="Nombre">
             </div>
 
             <div class="mb-3">
-                <input type="text" name = "id_tag" class="form-control" placeholder="NIT">
+              <input type="email" name = "email" class="form-control" placeholder="Correo electronico">
             </div>
 
             <div class="mb-3">
-                <input type="text" name = "country" class="form-control" placeholder="Pais">
-            </div>
+              <select class="form-select" name = "org" aria-label="Site" >
+                  <option selected value="default">Seleccione una organización</option>
+                  {% for o in orgs %}
+                  <option value="{{o.id_org}}">{{o.org_name}}</option>
+                  {% endfor %}
+                  </select>
+          </div>
 
-            <div class="mb-3">
-                <input type="text" name = "city" class="form-control" placeholder="Ciudad">
-            </div>
-
-            <div class="mb-3">
-                <input type="text" name = "address" class="form-control" placeholder="Dirección">
-            </div>
             
-            <div class="mb-3">
-                <input type="text" name = "postal" class="form-control" placeholder="Codigo postal">
-            </div>
             <div class = "boton_agregar">
-                
                 <button class="btn">Agregar</button>
-                
             </div>
         </form>
     </div>

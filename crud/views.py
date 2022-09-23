@@ -1,48 +1,53 @@
+from multiprocessing import context
 import re
 from sys import orig_argv
 from django.shortcuts import render, HttpResponse, redirect
 from . import models
 
-# Template Inicio
+# Template Inicio: Organizaciones
 def inicio(request):
     
     organizaciones = models.tb_org.objects.all().values_list(named=True)
-    #print(organizaciones)
-    context = {
-        "organizaciones": organizaciones,
-    }
+    context = {"organizaciones": organizaciones}
     
     return render(request, 'organizaciones/organizaciones.html', context)
 
+def buscar_organizacion(request):
+    org = request.POST['buscar_organizacion']
+    organizacion = models.tb_org.objects.filter(org_name__contains = org)
+    context = {
+        "organizaciones":organizacion
+    }
+    return render(request, 'organizaciones/organizaciones.html', context)
+
+# Tabs Organziaciones
 def tabs_organizacion(request, id_org):
     
     organizaciones = models.tb_org.objects.filter(id_org = id_org).values_list(named = True)
     personas = models.tb_people.objects.filter(id_org = id_org).values_list(named = True)
-    zonas = models.tb_zones.objects.filter(id_org = id_org).values()
+    sites = models.tb_sites.objects.filter(id_org = id_org).values()
     
-    # ID de los sitios relacionados a las zonas
-    # ID de las zonas
+    # ID DE LOS SITIOS
     id_sites = []
-    id_zonas = []
-    for zona in zonas:
-        if zona.get('id_site_id') not in id_sites: 
-            id_sites.append(zona.get('id_site_id'))
-        if zona.get('id_zone') not in id_zonas:
-            id_zonas.append(zona.get('id_zone'))
-    # información de los sitios relacionados
-    sites = {}
-    for id_site in id_sites:
-        sitio = models.tb_sites.objects.filter(id_site = id_site).values()
-        sites[id_site] = sitio
-    # Informacion de los equipos realcionados
+    for site in sites:
+        if site.get('id_site') not in id_sites: 
+            id_sites.append(site.get('id_site'))
+     
+     # ZONAS ADJUNTAS A LOS ID SITES
+    zonas = {} 
+    id_zonas = []      
+    for id in id_sites:
+        zona = models.tb_zones.objects.filter(id_site = id).values_list(named=True)
+        zonas["id"] = zona
+        for z in zona:
+            print(z.id_zone)
+            id_zonas.append(z.id_zone)
+    
+    # EQUIPOS ADJUNTOS
     devices = {}
-   
-    for id_zona in id_zonas:
-        device = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').filter(id_zone = id_zona)
-        
-        for dev in device:
-            
-            devices[dev.id_device] = dev
+    for id in id_zonas:
+        device = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').filter(id_zone = id)
+        devices[id] = device
     
     context = {
         "org": organizaciones,
@@ -54,18 +59,14 @@ def tabs_organizacion(request, id_org):
     
     return render(request, 'organizaciones/tabs_organizacion.html', context)
 
-def agregar_organizacion(request):
-    context = {
-        
-    }
+
+
+def agregar_organizacion(request):    
+    context = {}
     return render(request, 'organizaciones/formulario_organizaciones.html', context)
 
-# Template Registro de organizaciones
-def register_org(request):
-    return render(request, 'create/create_org.html', {})
-
 # Agregar nuevas organizaciones
-def new_org(request):
+def agregar_org(request):
     
     # Datos del formulario Organizaciones
     nombre  = request.POST['name']
@@ -79,7 +80,152 @@ def new_org(request):
     org = models.tb_org(org_name = nombre, org_tax_id = id_tag, country = country, city = city, addres = address, postal = postal)
     org.save()
     
+    # Organizaciones 
+    organizaciones = models.tb_org.objects.all().values_list(named=True)
+    context = {"organizaciones": organizaciones}
+    
+    return render(request, 'organizaciones/organizaciones.html', context)
+
+
+
+# Sitios
+def sitios(request):
+    sites = models.tb_sites.objects.all()
+    context = {'sites':sites}
+    return render(request, 'sitios/sitios.html', context)
+
+# Información del sitio consultado
+def tabs_sitios(request, id_site):
+    
+    site = models.tb_sites.objects.filter(id_site = id_site).values()
+    zones = models.tb_zones.objects.filter(id_site = id_site).values()
+    
+    # EQUIPOS ADJUNTOS
+    devices = {}
+    for zone in zones:
+        device = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').filter(id_zone = zone.get('id_zone'))
+        devices[zone.get('id_zone')] = device
+    
+    context = {"site":site,"zones": zones,"devices":devices}
+    
+    return render(request, 'sitios/tabs_sitios.html', context)
+
+# Buscar sitios
+def buscar_sitio(request):
+    name = request.POST['buscar_site']
+    print(name)
+    site = models.tb_sites.objects.filter(site_name__contains = name)
+    context = {'sites':site}
+    return render(request, 'sitios/sitios.html', context)    
+
+# Mostrar template agregar sitio
+def agregar_sitio(request):
+
+    return render(request, 'sitios/formulario_sitios.html',)
+
+# Agregar sitio
+def agregar_site(request):
+    
+    nombre  = request.POST['name']
+    country = request.POST['country']
+    city    = request.POST['city']
+    address = request.POST['address']
+    postal  = request.POST['postal']
+    
+    site = models.tb_sites(site_name = nombre, country = country, city = city, address = address, postal = postal)
+    site.save()
+
+    sites = models.tb_sites.objects.all()
+    context = {'sites':sites}
+    
+    return render(request, 'sitios/sitios.html', context)
+
+# Personas
+def personas(request):
+    
+    personas = models.tb_people.objects.all()
+    context = {'personas':personas}
+    return render(request, 'personas/personas.html', context)
+
+def buscar_personas(request):
+    name = request.POST['buscar_persona']
+    persona =  models.tb_people.objects.filter(name_people__contains = name)
+    context = {'personas':persona}
+    return render(request, 'personas/personas.html', context)
+
+def form_persona(request):
+    
+    org = models.tb_org.objects.all()
+    
+    return render(request, 'personas/formulario_personas.html', {'orgs':org})
+
+def agregar_persona(request):
+    
+    name = request.POST['name']
+    correo = request.POST['email']
+    id_org = request.POST['org']
+    print (correo)
+    # Instancia de la organizacion seleccioanda
+    org = models.tb_org.objects.get(id_org = id_org)
+    
+    persona = models.tb_people(email_people = correo, name_people = name, id_org = org)
+    persona.save()
+    
+    personas = models.tb_people.objects.all()
+    context = {'personas':personas}
+    return render(request, 'personas/personas.html', context )
+
+def actualizar_persona(request, id_persona):
+    
+    persona = models.tb_people.objects.get(email_people = id_persona)
+    org = models.tb_org.objects.all()
+    context ={ 'persona' : persona, 'orgs': org}    
+    return render(request, 'personas/actualizar_persona.html', context)
+
+def update_persona(request, id_persona):
+    
+    name = request.POST['name']
+    correo = request.POST['email']
+    id_org = request.POST['org']
+   
+    persona = models.tb_people.objects.get(email_people = id_persona)
+    
+    persona.email_people = correo
+    persona.name_people = name
+    
+    org = models.tb_org.objects.get(id_org = id_org)
+    persona.id_org = org
+    
+    persona.save()
+    
+    personas = models.tb_people.objects.all()
+    context = {'personas':personas}
+    
+    return render(request, 'personas/personas.html', context)
+    
+# Dispositivos
+def dispositivos(request):
+    
+    devices = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').all()
+        
+    context = {
+        'devices':devices,    
+    }
+    return render(request, 'dispositivos/dispositivos.html', context)
+
+def buscar_dispositivos(request):
+    
+    return render(request, '')
+
+
+
+
+#############################
+# Template Registro de organizaciones
+def register_org(request):
     return render(request, 'create/create_org.html', {})
+
+
 
 # Template Registro Empleados
 def register_employed(request):  

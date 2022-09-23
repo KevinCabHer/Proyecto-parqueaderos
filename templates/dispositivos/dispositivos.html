@@ -38,50 +38,49 @@
 
     <!-- TITULO -->
     <div class="title1">
-        <h3>Organizaciones</h3>
+        <h3>Dispositivos</h3>
     </div>
 
 
     <!-- CAMPO DE BUSQUEDA -->
-    <form action="{% url 'buscar_organizacion' %}" method="POST">
-      {% csrf_token %}
-      <div class = "contenedor_b">
-          <div class="input-group mb-3">
-              <input type="text" class="form-control" name = "buscar_organizacion" placeholder="Nombre de la Organizacion" aria-label="Recipient's username" aria-describedby="button-addon2">               
-              <button class="btn">Buscar</button>
-          </div>
-      </div>
-    </form>
+    
+    <div class = "contenedor_b">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Ip del dispositivo" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <button class="btn" type="button">Buscar</button>
+        </div>
+    </div>
+
       <!-- TABLA DE ITEMS -->
 
         <table class="table" style="background-color: white; ">
           <thead>
             <tr>
-              <th style="text-align: left;">Id</th>
-              <th style="text-align: left;">Nombre</th>
-              <th style="text-align: left">Tax ID</th>
-              <th style="text-align: left;">Pais</th>
-              <th style="text-align: left;">Ciudad</th>
-              <th style="text-align: left;">Dirección</th>
+              <th style="text-align: center;">Ip</th>
+              <th style="text-align: center">Tipo</th>
+              <th style="text-align: center;">Fecha Instalación</th>
+              <th style="text-align: center;">Procesador</th>
+              <th style="text-align: center;">Sistema Operativo</th>
+              <th style="text-align: center;">Zona</th>
               <th style="text-align: center;">Opciones</th>
             </tr>
           </thead>
           <tbody>
 
-            {% for org in organizaciones  %}
+            {% for val in devices %}
+            
             <tr>
-              <th scope="row" style="text-align: left;">{{ org.id_org }}</th>
-              <td align="left">{{ org.org_name }}</td>
-              <td align="left">{{ org.org_tax_id}}</td>
-              <td align="left">{{org.country}}</td>
-              <td align="left">{{org.city}}</td>
-              <td align="left">{{org.addres}}</td>
-              <td align="center">
-                <form action = "{% url 'tabs_organizacion' org.id_org %}" method="POST">
-                  {% csrf_token %}
-                <button class="btn btn-outline-primary">Consultar</button>
-                </form>
               
+              <td align="center">{{val.ip_from}}</td>
+              <td align="center">{{val.id_device_type.type_name}}</td>
+              <td align="center">{{val.date_created}}</td>
+              <td align="center">{{val.id_cpu.cpu_name}}</td>
+              <td align="center">{{val.id_os.os_name}}</td>
+              <td align="center">{{val.id_zone}}</td>
+              
+              <td align="center">
+                <button type="button" class="btn btn-outline-primary">Modificar</button>
+                <button type="button" class="btn btn-outline-danger">Eliminar</button>
               </td>
             </tr>         
             {% endfor %}
