@@ -43,25 +43,26 @@
 
 
     <!-- CAMPO DE BUSQUEDA -->
-    
-    <div class = "contenedor_b">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Ip del dispositivo" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <button class="btn" type="button">Buscar</button>
-        </div>
-    </div>
-
+    <form action = "{% url 'buscar_dispositivos' %}" method = "POST">
+      {% csrf_token %}
+      <div class = "contenedor_b">
+          <div class="input-group mb-3">
+              <input type="text" class="form-control" name="dispositivo" placeholder="Ip del dispositivo" aria-label="Recipient's username" aria-describedby="button-addon2">
+              <button class="btn">Buscar</button>
+          </div>
+      </div>
+    </form>
       <!-- TABLA DE ITEMS -->
 
         <table class="table" style="background-color: white; ">
           <thead>
             <tr>
-              <th style="text-align: center;">Ip</th>
-              <th style="text-align: center">Tipo</th>
-              <th style="text-align: center;">Fecha Instalación</th>
-              <th style="text-align: center;">Procesador</th>
-              <th style="text-align: center;">Sistema Operativo</th>
-              <th style="text-align: center;">Zona</th>
+              <th style="text-align: left;">Ip</th>
+              <th style="text-align: left;">Tipo</th>
+              <th style="text-align: left;">Fecha Instalación</th>
+              <th style="text-align: left;">Procesador</th>
+              <th style="text-align: left;">Sistema Operativo</th>
+              <th style="text-align: left;">Zona</th>
               <th style="text-align: center;">Opciones</th>
             </tr>
           </thead>
@@ -71,16 +72,27 @@
             
             <tr>
               
-              <td align="center">{{val.ip_from}}</td>
-              <td align="center">{{val.id_device_type.type_name}}</td>
-              <td align="center">{{val.date_created}}</td>
-              <td align="center">{{val.id_cpu.cpu_name}}</td>
-              <td align="center">{{val.id_os.os_name}}</td>
-              <td align="center">{{val.id_zone}}</td>
+              <td align="left">{{val.ip_from}}</td>
+              <td align="left">{{val.id_device_type.type_name}}</td>
+              <td align="left">{{val.date_created}}</td>
+              <td align="left">{{val.id_cpu.cpu_name}}</td>
+              <td align="left">{{val.id_os.os_name}}</td>
+              <td align="left">{{val.id_zone}}</td>
               
               <td align="center">
-                <button type="button" class="btn btn-outline-primary">Modificar</button>
-                <button type="button" class="btn btn-outline-danger">Eliminar</button>
+                <div style = " display: inline-block;">
+                  
+                  <form action="{% url 'actualizar_dispositivo' val.id_device %}" method="POST"> 
+                    {% csrf_token %}
+                    <button class="btn btn-outline-primary">Modificar</button>
+                  </form>
+                </div>
+                <div style = " display: inline-block;">
+                  <form action="" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-danger">Eliminar</button>
+                  </form>
+                </div>
               </td>
             </tr>         
             {% endfor %}
@@ -90,7 +102,7 @@
 
     <!-- BOTON AGREGAR  -->
     <div class = "boton">
-      <form action = "{% url 'form_organizacion' %}" method = "POST">
+      <form action = "{% url 'form_dispositivo' %}" method = "POST">
         {% csrf_token %}
         <button class="btn" >Agregar</button>
       <form>

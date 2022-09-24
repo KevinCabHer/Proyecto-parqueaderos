@@ -76,11 +76,20 @@
               <td align="left">{{ persona.id_org }}</td>
      
               <td align="center">
+                <div style = " display: inline-block;"> 
+                <form action = "{% url 'permisos_persona' persona.email_people %}" method="POST">
+                  {% csrf_token %}
+                  <button class="btn btn-outline-success">Permisos</button>
+                </form> 
+              </div>
+              <div style = " display: inline-block;">
                 <form action = "{% url 'actualizar_persona' persona.email_people %}" method="POST">
                   {% csrf_token %}
-                <button class="btn btn-outline-primary">Modificar</button>
+                  <button class="btn btn-outline-primary">Modificar</button>
                 </form>
-              </td>
+              </div>
+
+              </td> 
             </tr>         
             {% endfor %}
           </tbody>

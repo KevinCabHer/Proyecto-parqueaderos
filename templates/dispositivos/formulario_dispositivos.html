@@ -36,30 +36,56 @@
         </div>
       </nav>
 
-    <!-- FORMULARIO SITIOS-->
+    <!-- FORMULARIO DISPOSITIVOS -->
 
 <div class="contenedor">
     <div class="contenedor_form">
         <h4>Agregar información nueva persona: </h4>
-        <form action="{% url 'agregar_persona' %}" method="POST">
+        <form action="{% url 'agregar_dispositivo' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">
-              <input type="text" name = "name" class="form-control" placeholder="Nombre">
+              <input type="text" name = "ip" class="form-control" placeholder="Ip">
             </div>
 
             <div class="mb-3">
-              <input type="email" name = "email" class="form-control" placeholder="Correo electronico">
+              <input type="date" name = "fecha" class="form-control">
             </div>
 
             <div class="mb-3">
-              <select class="form-select" name = "org" aria-label="Site" >
-                  <option selected value="0">Sin organización</option>
-                  {% for o in orgs %}
-                  <option value="{{o.id_org}}">{{o.org_name}}</option>
+              <select class="form-select" name = "type" aria-label="Site" >
+                  <option selected value="default">Seleccione un tipo</option>
+                  {% for t in types %}
+                  <option value="{{t.id_device_type }}">{{t.type_name }}</option>
                   {% endfor %}
                   </select>
-          </div>
+            </div>
 
+            <div class="mb-3">
+              <select class="form-select" name = "cpu" aria-label="Site" >
+                  <option selected value="default">Seleccione un procesador</option>
+                  {% for cpu in cpus %}
+                  <option value="{{cpu.id_cpu }}">{{cpu.cpu_name}}</option>
+                  {% endfor %}
+                  </select>
+            </div>
+
+            <div class="mb-3">
+              <select class="form-select" name = "os" aria-label="Site" >
+                  <option selected value="default">Seleccione un sistema operativo</option>
+                  {% for o in os %}
+                  <option value="{{o.id_os}}">{{o.os_name}}</option>
+                  {% endfor %}
+                  </select>
+            </div>
+
+            <div class="mb-3">
+              <select class="form-select" name = "zone" aria-label="Site" >
+                  <option selected value="default">Seleccione una zona</option>
+                  {% for zone in zones %}
+                  <option value="{{zone.id_zone}}">{{zone.zone_name}}</option>
+                  {% endfor %}
+                  </select>
+            </div>
             
             <div class = "boton_agregar">
                 <button class="btn">Agregar</button>

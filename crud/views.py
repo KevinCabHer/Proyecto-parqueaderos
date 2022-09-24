@@ -7,7 +7,7 @@ from . import models
 # Template Inicio: Organizaciones
 def inicio(request):
     
-    organizaciones = models.tb_org.objects.all().values_list(named=True)
+    organizaciones = models.tb_org.objects.all().values_list(named=True).exclude(org_name = "Sin organizacion")
     context = {"organizaciones": organizaciones}
     
     return render(request, 'organizaciones/organizaciones.html', context)
@@ -84,13 +84,13 @@ def agregar_org(request):
     organizaciones = models.tb_org.objects.all().values_list(named=True)
     context = {"organizaciones": organizaciones}
     
-    return render(request, 'organizaciones/organizaciones.html', context)
+    return redirect('/')
 
 
 
 # Sitios
 def sitios(request):
-    sites = models.tb_sites.objects.all()
+    sites = models.tb_sites.objects.all().exclude(site_name = "Sin sitio")
     context = {'sites':sites}
     return render(request, 'sitios/sitios.html', context)
 
@@ -138,7 +138,7 @@ def agregar_site(request):
     sites = models.tb_sites.objects.all()
     context = {'sites':sites}
     
-    return render(request, 'sitios/sitios.html', context)
+    return redirect('/sitios/')
 
 # Personas
 def personas(request):
@@ -164,16 +164,17 @@ def agregar_persona(request):
     name = request.POST['name']
     correo = request.POST['email']
     id_org = request.POST['org']
-    print (correo)
-    # Instancia de la organizacion seleccioanda
-    org = models.tb_org.objects.get(id_org = id_org)
-    
+        
+    if id_org != "0":
+        org = models.tb_org.objects.get(id_org = id_org)
+    else:
+        org = models.tb_org.objects.get(org_name = 'Sin organizacion')
+        
     persona = models.tb_people(email_people = correo, name_people = name, id_org = org)
-    persona.save()
+    persona.save()        
     
-    personas = models.tb_people.objects.all()
-    context = {'personas':personas}
-    return render(request, 'personas/personas.html', context )
+    return redirect("/personas/")
+
 
 def actualizar_persona(request, id_persona):
     
@@ -187,42 +188,103 @@ def update_persona(request, id_persona):
     name = request.POST['name']
     correo = request.POST['email']
     id_org = request.POST['org']
+    
+    if id_org != "default":
    
-    persona = models.tb_people.objects.get(email_people = id_persona)
+        persona = models.tb_people.objects.get(email_people = id_persona)
+        
+        persona.email_people = correo
+        persona.name_people = name
+        
+        if id_org != "0":
+            org = models.tb_org.objects.get(id_org = id_org)
+        else:
+            org = models.tb_org.objects.get(org_name = 'Sin organizacion')
+            
+        persona.id_org = org
+        persona.save()
+        
+        personas = models.tb_people.objects.all()
+        context = {'personas':personas}
     
-    persona.email_people = correo
-    persona.name_people = name
-    
-    org = models.tb_org.objects.get(id_org = id_org)
-    persona.id_org = org
-    
-    persona.save()
-    
-    personas = models.tb_people.objects.all()
-    context = {'personas':personas}
+    else:
+        
+        personas = models.tb_people.objects.all()
+        context = {'personas':personas}
     
     return render(request, 'personas/personas.html', context)
     
+def permisos_persona(request, id_persona):
+    print(id_persona)
+    return render(request, 'personas/permisos_persona.html')
+
 # Dispositivos
 def dispositivos(request):
     
     devices = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').all()
-        
-    context = {
-        'devices':devices,    
-    }
+    context = {'devices':devices}
+    
     return render(request, 'dispositivos/dispositivos.html', context)
 
 def buscar_dispositivos(request):
     
-    return render(request, '')
+    id_dis = request.POST['dispositivo']
+    device = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').filter(ip_from__contains = id_dis)
+    context = {'devices':device}
+    
+    return render(request, 'dispositivos/dispositivos.html', context)
 
+def form_dispositivo(request):
+    
+    cpus = models.tb_cpu.objects.all()
+    types = models.tb_device_type.objects.all()
+    so    = models.tb_os.objects.all()
+    zones = models.tb_zones.objects.all()
+    
+    context = {"cpus":cpus, "types":types, "os":so, "zones":zones}  
+    
+    return render(request, 'dispositivos/formulario_dispositivos.html', context)
 
+def agregar_dispositivo(request):
+    
+    ip = request.POST['ip']
+    fecha = request.POST['fecha']
+    type = request.POST['type']
+    cpu = request.POST['cpu']
+    os = request.POST['os']
+    zone = request.POST['zone']
+    
+    types = models.tb_device_type.objects.get(id_device_type=type)
+    cpus = models.tb_cpu.objects.get(id_cpu = cpu)
+    so = models.tb_os.objects.get(id_os = os)
+    zones = models.tb_zones.objects.get(id_zone = zone)
+    
+    dispositivo = models.tb_devices(date_created = fecha, id_cpu = cpus, id_os = so, id_device_type = types, ip_from =ip, id_zone = zones)
+    dispositivo.save()
+    
+    return redirect('dispositivos')
 
+def actualizar_dispositivo(request, id_device):
+    
+    device = models.tb_devices.objects.get(id_device = id_device)
+    
+    cpus = models.tb_cpu.objects.all()
+    types = models.tb_device_type.objects.all()
+    so    = models.tb_os.objects.all()
+    zones = models.tb_zones.objects.all()
+    
+    print(device)
+    context = {"device": device, "cpus":cpus, "types":types, "os":so, "zones":zones}
+    
+    return render(request, 'dispositivos/actualizar_dispositivos.html', context)
+    
+    
+    
 
-#############################
+##################################################################################################
 # Template Registro de organizaciones
 def register_org(request):
+    
     return render(request, 'create/create_org.html', {})
 
 
@@ -265,6 +327,8 @@ def register_device(request):
     cpus = models.tb_cpu.objects.all()
     so = models.tb_os.objects.all()
     zones = models.tb_zones.objects.all()
+    
+    
     
     context = {
         "type_devices" : type_devices,

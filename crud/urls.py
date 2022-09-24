@@ -25,10 +25,14 @@ urlpatterns = [
     path('agregar_persona/', views.agregar_persona, name = "agregar_persona"),
     path('actualizar_persona/<str:id_persona>/', views.actualizar_persona, name = "actualizar_persona"),
     path('update_persona/<str:id_persona>/', views.update_persona, name = "update_persona"),
+    path('permisos_persona/<str:id_persona>/', views.permisos_persona, name = "permisos_persona"),
     
     #Dispositivos
     path('dispositivos/', views.dispositivos, name = "dispositivos"),
     path('buscar_dispositivos/', views.buscar_dispositivos, name = 'buscar_dispositivos'),
+    path('form_dispositivo/', views.form_dispositivo, name = "form_dispositivo"),
+    path('agregar_dispositivo/', views.agregar_dispositivo, name = "agregar_dispositivo"),
+    path('actualizar_dispositivo/<int:id_device>/', views.actualizar_dispositivo, name="actualizar_dispositivo"),
     
     
     ##########################################################################################
