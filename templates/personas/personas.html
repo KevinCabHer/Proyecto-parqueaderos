@@ -53,7 +53,7 @@
       </div>
     </form>
 
-    
+    <div class="container"> 
       <!-- TABLA DE ITEMS -->
 
         <table class="table" style="background-color: white; ">
@@ -61,7 +61,6 @@
             <tr>
               
               <th style="text-align: left;">Nombre</th>
-              <th style="text-align: left">Correo</th>
               <th style="text-align: left;">Organización</th>
               <th style="text-align: center;">Opciones</th>
              
@@ -72,14 +71,13 @@
             {% for persona in personas %}
             <tr>
               <th scope="row" style="text-align: left;">{{ persona.name_people }}</th>
-              <td align="left">{{ persona.email_people }}</td>
               <td align="left">{{ persona.id_org }}</td>
      
               <td align="center">
                 <div style = " display: inline-block;"> 
                 <form action = "{% url 'permisos_persona' persona.email_people %}" method="POST">
                   {% csrf_token %}
-                  <button class="btn btn-outline-success">Permisos</button>
+                  <button class="btn btn-outline-success" >Permisos</button>
                 </form> 
               </div>
               <div style = " display: inline-block;">
@@ -95,7 +93,7 @@
           </tbody>
         </table>
     
-
+      </div>
     <!-- BOTON AGREGAR  -->
       <div class = "boton">
         <form action = "{% url 'form_persona' %}" method = "POST">

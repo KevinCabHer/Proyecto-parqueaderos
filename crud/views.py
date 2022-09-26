@@ -3,8 +3,13 @@ import re
 from sys import orig_argv
 from django.shortcuts import render, HttpResponse, redirect
 from . import models
+import datetime
 
-# Template Inicio: Organizaciones
+#------------------#
+#  Organizaciones  #
+#------------------#
+
+# Template Inicio: muestra la totaldiad de las Organizaciones
 def inicio(request):
     
     organizaciones = models.tb_org.objects.all().values_list(named=True).exclude(org_name = "Sin organizacion")
@@ -12,15 +17,19 @@ def inicio(request):
     
     return render(request, 'organizaciones/organizaciones.html', context)
 
+# Busca cualquier organización que contenga en su nombre texto de la busqueda
 def buscar_organizacion(request):
+    
     org = request.POST['buscar_organizacion']
     organizacion = models.tb_org.objects.filter(org_name__contains = org)
+    
     context = {
         "organizaciones":organizacion
     }
+    
     return render(request, 'organizaciones/organizaciones.html', context)
 
-# Tabs Organziaciones
+# Muestra el tabs de organizaciones con la informacion de sitios, zonas, equipos y personas relacionadas a la org
 def tabs_organizacion(request, id_org):
     
     organizaciones = models.tb_org.objects.filter(id_org = id_org).values_list(named = True)
@@ -40,7 +49,6 @@ def tabs_organizacion(request, id_org):
         zona = models.tb_zones.objects.filter(id_site = id).values_list(named=True)
         zonas["id"] = zona
         for z in zona:
-            print(z.id_zone)
             id_zonas.append(z.id_zone)
     
     # EQUIPOS ADJUNTOS
@@ -86,9 +94,11 @@ def agregar_org(request):
     
     return redirect('/')
 
+#------------#
+#   Sitios   #
+#------------#
 
-
-# Sitios
+# Muestra el template de sitios con la totalidad de sitios disponibles
 def sitios(request):
     sites = models.tb_sites.objects.all().exclude(site_name = "Sin sitio")
     context = {'sites':sites}
@@ -140,25 +150,35 @@ def agregar_site(request):
     
     return redirect('/sitios/')
 
-# Personas
+#------------#
+#  PERSONAS  #
+#------------#
+
+# Muestra el template con la totalidad de las personas
 def personas(request):
     
     personas = models.tb_people.objects.all()
     context = {'personas':personas}
+    
     return render(request, 'personas/personas.html', context)
 
+# Permite Buscar personas por nombre
 def buscar_personas(request):
+    
     name = request.POST['buscar_persona']
     persona =  models.tb_people.objects.filter(name_people__contains = name)
     context = {'personas':persona}
+    
     return render(request, 'personas/personas.html', context)
 
+# Redirije al formulario para agregar personas
 def form_persona(request):
     
     org = models.tb_org.objects.all()
     
     return render(request, 'personas/formulario_personas.html', {'orgs':org})
 
+# Agrega una nueva persona a la base de datos
 def agregar_persona(request):
     
     name = request.POST['name']
@@ -175,50 +195,69 @@ def agregar_persona(request):
     
     return redirect("/personas/")
 
-
+# Envia al formulario para actualizar los datos de una persona
 def actualizar_persona(request, id_persona):
     
     persona = models.tb_people.objects.get(email_people = id_persona)
     org = models.tb_org.objects.all()
-    context ={ 'persona' : persona, 'orgs': org}    
+    org_ = models.tb_org.objects.get(org_name = persona.id_org)
+    
+    context ={ 'persona' : persona, 'orgs': org , "org_" : org_.id_org}    
+    
     return render(request, 'personas/actualizar_persona.html', context)
 
+# Guarda los cambios realizdos en el registro
 def update_persona(request, id_persona):
+        
+    persona = models.tb_people.objects.get(email_people = id_persona)
     
-    name = request.POST['name']
     correo = request.POST['email']
-    id_org = request.POST['org']
+    name = request.POST['name']
+    org = request.POST['org']
     
-    if id_org != "default":
-   
-        persona = models.tb_people.objects.get(email_people = id_persona)
-        
-        persona.email_people = correo
-        persona.name_people = name
-        
-        if id_org != "0":
-            org = models.tb_org.objects.get(id_org = id_org)
-        else:
-            org = models.tb_org.objects.get(org_name = 'Sin organizacion')
-            
-        persona.id_org = org
+    # En caso de que se desee cambiar el correo
+    if persona.email_people != correo:
+        # Elimino el registro
+        persona.delete()
+        # Instancia de la organización
+        id_org = models.tb_org.objects.get(id_org = org)
+        # Nuevo registro con los datos seleccionados
+        persona = models.tb_people(email_people = correo, name_people = name, id_org = id_org )
         persona.save()
         
-        personas = models.tb_people.objects.all()
-        context = {'personas':personas}
-    
+    # En caso contrario se actualiza org y name
     else:
-        
-        personas = models.tb_people.objects.all()
-        context = {'personas':personas}
+        print("entre aca")
+        id_org = models.tb_org.objects.get(id_org = org)
+        persona.id_org = id_org
+        persona.name_people = name
+        persona.save()
     
-    return render(request, 'personas/personas.html', context)
-    
-def permisos_persona(request, id_persona):
-    print(id_persona)
-    return render(request, 'personas/permisos_persona.html')
+    return redirect('/personas/')
 
-# Dispositivos
+# Muestra los permisos relacionados a la persona seleccionada persona
+def permisos_persona(request, id_persona):
+    
+    persona = models.tb_people.objects.get(email_people = id_persona)
+    permisos = models.tb_permissions.objects.filter(email_people = id_persona)
+    context = {"permisos": permisos, "persona":persona.name_people}
+   
+    return render(request, 'personas/permisos_persona.html', context)
+
+# Eliminar permiso
+
+# Envia al formulario para asignar nuevos permisos a una persona
+def formulario_permisos_persona(request, id_persona):
+    
+    context = {}
+    
+    return render(request, 'personas/formulario_permisos_personas.html', context)
+
+#---------------------#
+#     Dispositivos    #
+#---------------------#
+
+# Muestra el template con la lista de dispositivos
 def dispositivos(request):
     
     devices = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').all()
@@ -234,8 +273,10 @@ def buscar_dispositivos(request):
     
     return render(request, 'dispositivos/dispositivos.html', context)
 
+# Muestra el formualario para agregar nuevos dispositivos
 def form_dispositivo(request):
     
+    # Opciones disponibles en la base de datos para cpus, types, so, y zonas
     cpus = models.tb_cpu.objects.all()
     types = models.tb_device_type.objects.all()
     so    = models.tb_os.objects.all()
@@ -245,8 +286,10 @@ def form_dispositivo(request):
     
     return render(request, 'dispositivos/formulario_dispositivos.html', context)
 
+# Crea la instancia del nuevo dispostivo y la guarda
 def agregar_dispositivo(request):
     
+    # Toma los valores introducidos en el formulario
     ip = request.POST['ip']
     fecha = request.POST['fecha']
     type = request.POST['type']
@@ -254,293 +297,70 @@ def agregar_dispositivo(request):
     os = request.POST['os']
     zone = request.POST['zone']
     
+    # Crea isntancias de las selecciones con llave foranea
     types = models.tb_device_type.objects.get(id_device_type=type)
     cpus = models.tb_cpu.objects.get(id_cpu = cpu)
     so = models.tb_os.objects.get(id_os = os)
     zones = models.tb_zones.objects.get(id_zone = zone)
     
+    # Crea una instancia del dispotivo con las opciones seleccionadas y lo guarda
     dispositivo = models.tb_devices(date_created = fecha, id_cpu = cpus, id_os = so, id_device_type = types, ip_from =ip, id_zone = zones)
     dispositivo.save()
     
     return redirect('dispositivos')
 
-def actualizar_dispositivo(request, id_device):
+# Carga el formulario de actualización con los datos del dispositivo seleccionado
+def formulario_actualizar_dispositivo(request, id_device):
     
+    # Instancia del equipo seleccionado
     device = models.tb_devices.objects.get(id_device = id_device)
     
-    cpus = models.tb_cpu.objects.all()
-    types = models.tb_device_type.objects.all()
-    so    = models.tb_os.objects.all()
-    zones = models.tb_zones.objects.all()
+    # Instancias de todos los cpu, so, zones, tipos disponibles
+    cpus    = models.tb_cpu.objects.all()
+    types   = models.tb_device_type.objects.all()
+    so      = models.tb_os.objects.all()
+    zones   = models.tb_zones.objects.all()
     
-    print(device)
-    context = {"device": device, "cpus":cpus, "types":types, "os":so, "zones":zones}
+    # Instancia de los datos del equipo seleccionado
+    cpu_    = models.tb_cpu.objects.get(cpu_name = device.id_cpu)
+    so_     = models.tb_os.objects.get(os_name = device.id_os)
+    zone_   = models.tb_zones.objects.get(zone_name = device.id_zone)
+    device_ = models.tb_device_type.objects.get(id_device_type = str(device.id_device_type))
+    
+    # Fecha de creación en formato valido para Input Date HTML
+    fecha = device.date_created.strftime('%Y-%m-%d')
+    
+    context = {"device": device, "cpus":cpus, "types":types, "os":so, "zones":zones, "fecha": fecha,
+               "so_":so_.id_os, "zone_": zone_.id_zone, "cpu_":cpu_.id_cpu, "device_": device_.id_device_type}
     
     return render(request, 'dispositivos/actualizar_dispositivos.html', context)
-    
-    
-    
 
-##################################################################################################
-# Template Registro de organizaciones
-def register_org(request):
+# Actualizar la información del dispostivo seleccionado
+def actualizar_dispositivo(request, id_device):
     
-    return render(request, 'create/create_org.html', {})
-
-
-
-# Template Registro Empleados
-def register_employed(request):  
-    org = models.tb_org.objects.all()
-    context = {
-        "organizaciones" : org
-    }
-    return render(request, 'create/create_employed.html', context)
-
-# Agregar nuevo empleado
-def new_employed(request):
+    # Instancia del dispositivo
+    device = models.tb_devices.objects.get(id_device = id_device)
     
-    # Datos del formulario empleados
-    email       = request.POST['email']
-    nombre      = request.POST['nombre']
-    organizacion = request.POST['organizacion']
+    #Asignación d elos nuevos valores
+    device.ip_from          = request.POST['ip']
+    device.date_created     = request.POST['fecha']
+    device.id_device_type   = models.tb_device_type.objects.get(id_device_type = request.POST['type'])
+    device.id_cpu           = models.tb_cpu.objects.get(id_cpu = request.POST['cpu'])
+    device.id_os            = models.tb_os.objects.get(id_os = request.POST['os'])
+    device.id_zone          = models.tb_zones.objects.get(id_zone = request.POST['zone'])
     
-    # Instancia de la organización seleccionada
-    org = models.tb_org.objects.get(id_org = organizacion)
-    
-    # Instancia de la tabla people con los datos de la nueva persona
-    employed = models.tb_people(email_people = email, name_people = nombre, id_org = org )
-    employed.save()
-    
-    org = models.tb_org.objects.all()
-    context = {
-        "organizaciones" : org
-    }
-    
-    return render(request, 'create/create_employed.html', context)
-
-# Template Registro de equipos
-def register_device(request):
-    
-    # Busqueda de los diferentes elementos para listarlo en los select de los formularios
-    type_devices = models.tb_device_type.objects.all()
-    cpus = models.tb_cpu.objects.all()
-    so = models.tb_os.objects.all()
-    zones = models.tb_zones.objects.all()
-    
-    
-    
-    context = {
-        "type_devices" : type_devices,
-        "cpus" : cpus,
-        "so"   : so,
-        "zones": zones
-        } 
-    
-    return render(request, 'create/create_device.html', context)
-
-# Agregar nuevo equipo
-def new_device(request):
-    
-    # Datos del formulario nuevo equipo
-    ip = request.POST['ip']
-    type = request.POST['tipo_equipo']
-    cpu = request.POST['procesador']
-    so = request.POST['so']
-    date = request.POST['fecha']
-    zone = request.POST['zone_']
-    
-    # Consulta de las llaves foraneas
-    cpu = models.tb_cpu.objects.get(id_cpu = cpu)
-    os = models.tb_os.objects.get(id_os = so)
-    type_device = models.tb_device_type.objects.get(id_device_type = type)
-    zone = models.tb_zones.objects.get(id_zone = zone)
-    
-    # Instancia de la tabla tb_devices con los datos del nuevo equipo
-    device = models.tb_devices(id_cpu = cpu, id_os = os, id_device_type = type_device, ip_from = ip, date_created = date, id_zone = zone)
+    # Guarda los cambios 
     device.save()
-    
-    # Busqueda de los diferentes elementos para listarlo en los select de los formularios
-    type_devices = models.tb_device_type.objects.all()
-    cpus = models.tb_cpu.objects.all()
-    so = models.tb_os.objects.all()
-    zones = models.tb_zones.objects.all()
-    
-    context = {
-        "type_devices" : type_devices,
-        "cpus" : cpus,
-        "so"   : so,
-        "zones": zones
-        } 
-    
-    return render(request, 'create/create_device.html', context)
+        
+    return redirect('/dispositivos/') 
 
-# Template registro zonas
-def register_zone(request):
+# Eliminar dispostivos atravez de la interfaz
+def eliminar_dispositivo(request, id_device):
     
-    # Busqueda de los diferentes elementos para listarlo en los select de los formularios
-    sites = models.tb_sites.objects.all()
-    org = models.tb_org.objects.all()
-    context = {
-        'sites':sites,
-        'orgs':org
-               }
+    # Instancia del dispositivo seleccionado
+    device = models.tb_devices.objects.get(id_device = id_device)
+    # Elimina el registro
+    device.delete()
     
-    return render(request, 'create/create_zone.html', context)
-
-def new_zone(request):
-    # Instancia de la organización y sitio seleccinado
-    org = models.tb_org.objects.get(id_org = request.POST['org'])
-    site = models.tb_sites.objects.get(id_site = request.POST['site'])
-    # Instancia del modelo con los datos del nuevo registro
-    zone = models.tb_zones(zone_name=request.POST['name'], id_org=org, id_site=site)
-    zone.save()
+    return redirect('/dispositivos/')
     
-    # Busqueda de los diferentes elementos para listarlo en los select de los formularios
-    sites = models.tb_sites.objects.all()
-    org = models.tb_org.objects.all()
-    context = {
-        'sites':sites,
-        'orgs':org
-               }
-    
-    return render(request, 'create/create_zone.html', context)
-
-# Mostrar elementos 
-def consulta(request):
-    
-    # Varaibles de control para condicionar lo que se muestra en el template
-    org_ = 0
-    employed_ = 0
-    devices_ = 0
-    
-    # Elementos encontrados en las diferentes listas
-    org      = models.tb_org.objects.all()
-    employed = models.tb_people.objects.all()
-    devices  = models.tb_devices.objects.all()
-   
-   # Comprueba si hay registros existentes
-    if org.exists():
-        org_ = 1
-    if employed.exists():
-        employed_ = 1
-    if devices.exists():
-        devices_ = 1
-    
-    context = {
-        "organizaciones" : org,
-        "empleados" : employed,
-        "equipos" : devices, 
-        "org_" : org_,
-        "employed" : employed_,
-        "dev" : devices_,
-    }
-    
-    
-    return render(request, 'read_update_delete/rud.html', context)
-
-# Eliminar Organizaciones
-def delete_org(request, id_org):
-    
-    org = models.tb_org.objects.get(id_org = id_org)
-    org.delete()
-    
-    return redirect('/consulta/')    
-
-# Eliminar empleados
-def delete_employed(request, id_people):
-    
-    employed = models.tb_people.objects.get(id_people = id_people)
-    employed.delete()
-    
-    return redirect('/consulta/')
-
-# Eliminar equipos
-def delete_device(request, id_device):
-    
-    devices = models.tb_devices.objects.get(id_device = id_device)
-    devices.delete()
-    
-    return redirect('/consulta/')
-
-# Muestra el formulario de organizacion corespondiente para ser actualizado
-def update_org(request, id_org):
-    
-    # Objeto con los datos seleccionadas    
-    org = models.tb_org.objects.get(id_org = id_org)
-    context = {'org' : org}
-    return render(request, 'read_update_delete/update_org.html', context)
-
-# Actualiza los datos de la organización
-def u_org(request, id_org):
-    
-    # Objeto con la organización seleccionada
-    org = models.tb_org.objects.get(id_org = id_org)
-     
-    # Datos del formulario Organización asignados al objeto
-    org.org_name    = request.POST['name']
-    org.org_tax_id  = request.POST['id_tag']
-    org.country     = request.POST['country']
-    org.city        = request.POST['city']
-    org.addres      = request.POST['address']
-    org.postal      = request.POST['postal']
-    
-    # Guarda el objeto con los nuevos valores
-    org.save()
-    
-    return redirect('/consulta/')
-
-# Muestra el template de actualización del empleado elegido con los datos correspondientes
-def update_emp(request, id_emp):
-    
-    empl = models.tb_people.objects.get(id_people = id_emp)
-    context = {'empl' : empl}
-    return render(request, 'read_update_delete/update_employed.html', context)
-
-# Guarda los cambios realizados en el formulario correspondiente al empleado
-def u_emp(request, id_emp):
-    
-    empl = models.tb_people.objects.get(id_people = id_emp)
-    empl.email_people = request.POST['email']
-    empl.name_people = request.POST['nombre']
-    org = request.POST['organizacion']
-    
-    # En caso de seleccionar una organización se actualiza, en caso contrario no se altera el campo
-    if org != "default":
-        empl.id_org = models.tb_org.objects.get(id_org = org)
-     
-    empl.save()
-    return redirect('/consulta/')
-  
-
-def update_dev(request, id_dev):
-    
-    type_devices = models.tb_device_type.objects.all()
-    cpus = models.tb_cpu.objects.all()
-    so = models.tb_os.objects.all()
-    zones = models.tb_zones.objects.all()
-    
-    dev = models.tb_devices.objects.select_related('id_device_type').get(id_device = id_dev)
-    
-    cpu_ = models.tb_cpu.objects.get(cpu_name = dev.id_cpu)
-    so_ = models.tb_os.objects.get(os_name = dev.id_os)
-    zone_ = models.tb_zones.objects.get(zone_name = dev.id_zone)
-    print(dev.id_zone)
-    
-    context = {
-        "type_devices" : type_devices,
-        "cpus" : cpus,
-        "so"   : so,
-        "zones": zones,
-        "dev"  : dev,
-        "cpu_" : cpu_.id_cpu,
-        "so_"  : so_.id_os,
-        "zone_": zone_.zone_name,
-        "select_type": dev.id_device_type.type_name,
-        }
-    
-    return render(request, 'read_update_delete/update_device.html', context)
-
-def u_dev(request, id_dev):
-    
-    return HttpResponse("ahi fue")

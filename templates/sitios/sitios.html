@@ -54,7 +54,7 @@
     </form>
 
       <!-- TABLA DE ITEMS -->
-
+    <div class="container">
         <table class="table" style="background-color: white; ">
           <thead>
             <tr>
@@ -86,7 +86,7 @@
             {% endfor %}
           </tbody>
         </table>
-    
+      </div>
     <!-- BOTON AGREGAR  -->
     <div class = "boton">
       <form action = "{% url 'agregar_sitio' %}" method = "POST">

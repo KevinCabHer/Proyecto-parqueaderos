@@ -53,7 +53,7 @@
       </div>
     </form>
       <!-- TABLA DE ITEMS -->
-
+      <div class="container">
         <table class="table" style="background-color: white; ">
           <thead>
             <tr>
@@ -80,17 +80,17 @@
               <td align="left">{{val.id_zone}}</td>
               
               <td align="center">
-                <div style = " display: inline-block;">
+                <div style = " display: inline-block; ">
                   
-                  <form action="{% url 'actualizar_dispositivo' val.id_device %}" method="POST"> 
+                  <form action="{% url 'formulario_actualizar_dispositivo' val.id_device %}" method="POST"> 
                     {% csrf_token %}
-                    <button class="btn btn-outline-primary">Modificar</button>
+                    <button class="btn btn-outline-primary" style="width:100px;">Modificar</button>
                   </form>
                 </div>
                 <div style = " display: inline-block;">
-                  <form action="" method="POST">
+                  <form action="{% url 'eliminar_dispositivo' val.id_device %}" method="POST">
                     {% csrf_token %}
-                    <button class="btn btn-outline-danger">Eliminar</button>
+                    <button class="btn btn-outline-danger" style="width:100px; margin:10px;">Eliminar</button>
                   </form>
                 </div>
               </td>
@@ -98,7 +98,7 @@
             {% endfor %}
           </tbody>
         </table>
-    
+      </div>
 
     <!-- BOTON AGREGAR  -->
     <div class = "boton">

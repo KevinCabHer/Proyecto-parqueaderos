@@ -53,7 +53,7 @@
       </div>
     </form>
       <!-- TABLA DE ITEMS -->
-
+    <div class= "container">
         <table class="table" style="background-color: white; ">
           <thead>
             <tr>
@@ -81,13 +81,12 @@
                   {% csrf_token %}
                 <button class="btn btn-outline-primary">Consultar</button>
                 </form>
-              
               </td>
             </tr>         
             {% endfor %}
           </tbody>
         </table>
-    
+      </div>
 
     <!-- BOTON AGREGAR  -->
     <div class = "boton">

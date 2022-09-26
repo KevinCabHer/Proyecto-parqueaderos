@@ -40,33 +40,56 @@
 
 <div class="contenedor">
     <div class="contenedor_form">
-        <h4>Agregar información nueva persona: </h4>
-        <form action="{% url 'update_persona' persona.email_people %}" method="POST">
+        <h4>Asignar permisos: </h4>
+        <form action="" method="POST">
             {% csrf_token %}
-            <div class="mb-3">
-              <input type="text" value = "{{persona.name_people}}"name = "name" class="form-control" placeholder="Nombre">
-            </div>
-
-            <div class="mb-3">
-              <input type="email" value = "{{persona.email_people}}"name = "email" class="form-control" placeholder="Correo electronico">
-            </div>
 
             <div class="mb-3">
               <select class="form-select" name = "org" aria-label="Site" >
+                  <option selected value="0">organización</option>
                   {% for o in orgs %}
-                    {% if o.id_org == org_ %}
-                    <option selected value="{{o.id_org}}">{{o.org_name}}</option>
-                    {% else %}
-                    <option value="{{o.id_org}}">{{o.org_name}}</option>
-                    {% endif %}
+                  <option value="{{o.id_org}}">{{o.org_name}}</option>
                   {% endfor %}
                   </select>
           </div>
 
-            
-            <div class = "boton_agregar">
-                <button class="btn">Agregar</button>
+          <div class="mb-3">
+            <select class="form-select" name = "org" aria-label="Site" >
+                <option selected value="0">Sitio</option>
+                {% for o in orgs %}
+                <option value="{{o.id_org}}">{{o.org_name}}</option>
+                {% endfor %}
+                </select>
+          </div>
+
+          <div class="mb-3">
+            <select class="form-select" name = "org" aria-label="Site" >
+                <option selected value="0">Zona</option>
+                {% for o in orgs %}
+                <option value="{{o.id_org}}">{{o.org_name}}</option>
+                {% endfor %}
+                </select>
+          </div>
+          <div class = container style = "width: 200px;">
+            <div class="input-group-text" style = "background-color: white; ">
+              <input type="checkbox" aria-label="Checkbox for following text input" style="margin: 10px;">
+              <label style="margin: 10px;"> Visualizar</label>
             </div>
+
+            <div class="input-group-text" style = "background-color: white;">
+              <input type="checkbox" aria-label="Checkbox for following text input" style="margin: 10px;">
+              <label style="margin: 10px;"> Modificar</label>
+            </div>
+
+            <div class="input-group-text" style = "background-color: white;">
+              <input type="checkbox" aria-label="Checkbox for following text input" style="margin: 10px;">
+              <label style="margin: 10px;"> Eliminar</label>
+            </div>
+
+            <div class = "boton_agregar" style="margin-top: 20px;">
+              <button class="btn">Guardar</button>
+            </div>
+          </div>
         </form>
     </div>
 </div>

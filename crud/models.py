@@ -1,5 +1,3 @@
-from re import T
-from socket import INADDR_ALLHOSTS_GROUP
 from django.db import models
    
 # Tabla de organizaciones   
@@ -152,11 +150,12 @@ class tb_people(models.Model):
 class tb_permissions(models.Model):
     id_permission   = models.AutoField(db_column='IdPermission', primary_key=True)
     email_people    = models.ForeignKey('tb_people', on_delete=models.CASCADE, db_column='EmailPeople')
-    id_org          = models.IntegerField(db_column='IdOrg', blank=True, null=True)
-    id_site         = models.IntegerField(db_column='IdSite', blank=True, null=True)    
-    id_zone         = models.IntegerField(db_column='IdZone', blank=True, null=True) 
-    id_device       = models.IntegerField(db_column='IdDevice', blank=True, null=True) 
-    
+    id_org          = models.ForeignKey('tb_org', on_delete=models.CASCADE, db_column='IdOrg')
+    id_site         = models.ForeignKey('tb_sites', on_delete=models.CASCADE, db_column='IdSite', null=True)   
+    id_zone         = models.ForeignKey('tb_zones', on_delete=models.CASCADE, db_column='IdZone', null=True)
+    id_dev          = models.ForeignKey('tb_devices', on_delete=models.CASCADE, db_column='IdDevices', null=True)
+    level           = models.IntegerField(db_column='Level', blank=True, null=True)
+                 
     class Meta:
         managed = True
         db_table = 'Tb_Permissions'

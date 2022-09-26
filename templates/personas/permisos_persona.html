@@ -9,7 +9,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;400;600&display=swap');
     </style>
-    <link rel="stylesheet" href="{% static '/css/formulario_organizaciones.css' %}">
+    <link href="{% static '/css/organizaciones.css' %}" type="text/css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
@@ -36,63 +36,69 @@
         </div>
       </nav>
 
-    <!-- FORMULARIO SITIOS-->
-
-<div class="contenedor">
-    <div class="contenedor_form">
-        <h4>Asignar permisos: </h4>
-        <form action="" method="POST">
-            {% csrf_token %}
-
-            <div class="mb-3">
-              <select class="form-select" name = "org" aria-label="Site" >
-                  <option selected value="0">organización</option>
-                  {% for o in orgs %}
-                  <option value="{{o.id_org}}">{{o.org_name}}</option>
-                  {% endfor %}
-                  </select>
-          </div>
-
-          <div class="mb-3">
-            <select class="form-select" name = "org" aria-label="Site" >
-                <option selected value="0">Sitio</option>
-                {% for o in orgs %}
-                <option value="{{o.id_org}}">{{o.org_name}}</option>
-                {% endfor %}
-                </select>
-          </div>
-
-          <div class="mb-3">
-            <select class="form-select" name = "org" aria-label="Site" >
-                <option selected value="0">Zona</option>
-                {% for o in orgs %}
-                <option value="{{o.id_org}}">{{o.org_name}}</option>
-                {% endfor %}
-                </select>
-          </div>
-
-            <div class="input-group-text" style = "background-color: white;">
-              <input type="checkbox" aria-label="Checkbox for following text input" style="margin: 10px;">
-              <label style="margin: 10px;"> Visualizar</label>
-            </div>
-
-            <div class="input-group-text" style = "background-color: white;">
-              <input type="checkbox" aria-label="Checkbox for following text input" style="margin: 10px;">
-              <label style="margin: 10px;"> Modificar</label>
-            </div>
-
-            <div class="input-group-text" style = "background-color: white;">
-              <input type="checkbox" aria-label="Checkbox for following text input" style="margin: 10px;">
-              <label style="margin: 10px;"> Eliminar</label>
-            </div>
-
-            <div class = "boton_agregar" style="margin-top: 20px;">
-              <button class="btn">Guardar</button>
-            </div>
-           
-        </form>
+    <!-- TITULO -->
+    <div class="title1">
+        <h3>Permisos de {{persona}}</h3>
     </div>
-</div>
+
+      <!-- TABLA DE ITEMS -->
+
+      <div class = "container"> 
+
+        <table class="table" style="background-color: white; ">
+          <thead>
+            <tr>
+              
+              <th style="text-align: left;">Id Permiso</th>
+              <th style="text-align: left">Organización</th>
+              <th style="text-align: left;">Sitio</th>
+              <th style="text-align: center;">Zona</th>
+              <th style="text-align: center;">Id device</th>
+              <th style="text-align: center;">Nivel de Acceso</th>
+              <th style="text-align: center;">Opciones</th>
+             
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for permiso in permisos %}
+            <tr>
+              <th scope="row" style="text-align: left;">{{ permiso.id_permission }}</th>
+              <td align="left">{{ permiso.id_org }}</td>
+              <td align="left">{{ permiso.id_site }}</td>
+              <td align="left">{{ permiso.id_zone }}</td>
+              <td align="left">{{ permiso.id_dev }}</td>
+              <td align="center">{{ permiso.level }}</td>
+              <td align="center">
+                <div style = " display: inline-block;"> 
+                <form action = "" method="POST">
+                  {% csrf_token %}
+                  <button class="btn btn-outline-primary">Modificar</button>
+                </form> 
+              </div>
+              <div style = " display: inline-block;">
+                <form action = "" method="POST">
+                  {% csrf_token %}
+                  <button class="btn btn-outline-danger">Eliminar</button>
+                </form>
+              </div>
+
+              </td> 
+            </tr>         
+            {% endfor %}
+          </tbody>
+        </table>
+    
+      </div>
+
+
+    <!-- BOTON AGREGAR  -->
+      <div class = "boton">
+        <form action = "" method = "POST">
+          {% csrf_token %}
+          <button class="btn" >Nuevo permiso</button>
+        <form>
+      </div>
 
 </body>
 </html>

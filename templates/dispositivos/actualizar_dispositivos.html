@@ -40,34 +40,35 @@
 
 <div class="contenedor">
     <div class="contenedor_form">
-        <h4>Agregar información nueva persona: </h4>
-        <form action="{% url 'agregar_dispositivo' %}" method="POST">
+        <h4>Actualizar Información</h4>
+        
+        <form action="{% url 'actualizar_dispositivo' device.id_device %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">
               <input type="text" name = "ip" value="{{device.ip_from}}" class="form-control" placeholder="Ip">
             </div>
 
             <div class="mb-3">
-              <input type="date" name = "fecha" value="{{device.date_created}}" class="form-control">
+              <input type="date" name = "fecha" value={{fecha}} class="form-control">
             </div>
             
             <div class="mb-3">
               <select class="form-select" name = "type" aria-label="Site" >                  
                   {% for t in types %}
-                    {% if t.id_device_type == device.id_device_type %}
-                    <option selected value="{{t.id_device_type }}">{{t.type_name }}</option>
+                    {% if t.id_device_type == device_ %}
+                    <option selected value={{t.id_device_type }}>{{t.type_name }}</option>
                     {% else %}
-                    <option value="{{t.id_device_type }}">{{t.type_name }}</option>
+                    <option value={{t.id_device_type }}>{{t.type_name }}</option>
                     {% endif %}
                   {% endfor %}
-                  </select>
+              </select>
             </div>
 
             <div class="mb-3">
               <select class="form-select" name = "cpu" aria-label="Site" >
                   
                   {% for cpu in cpus %}
-                    {% if cpu.id_cpu == device.id_cpu %}
+                    {% if cpu.id_cpu == cpu_ %}
                     <option selected value="{{cpu.id_cpu }}">{{cpu.cpu_name}}</option>
                     {% else %}
                     <option value="{{cpu.id_cpu }}">{{cpu.cpu_name}}</option>
@@ -75,37 +76,35 @@
                   {% endfor %}
                   </select>
             </div>
-
+            
             <div class="mb-3">
               <select class="form-select" name = "os" aria-label="Site" >
-                  <option selected value="default">Seleccione un sistema operativo</option>
+                  
                   {% for o in os %}
-                    {% if o.os_name == device.id_os %}
-                    <option selected value="{{o.id_os}}">{{o.os_name}}</option>
+                    {% if so_ == o.id_os  %}
+                      <option selected value="{{o.id_os}}">{{o.os_name}}</option>
                     {% else %}
-                    <option value="{{o.id_os}}">{{o.os_name}}</option>
+                      <option value="{{o.id_os}}">{{o.os_name}}</option>
                     {% endif %}
                   {% endfor %}
                   </select>
             </div>
-            <h1>{{device.id_zone}}</h1>
-            <h1>{{device.id_zone}}</h1>
+            
             <div class="mb-3">
               <select class="form-select" name = "zone" aria-label="Site" >
                   
                   {% for zone in zones %}
-                  
-                    {% if zone.zone_name == device.id_zone %}
-                    <option selected value="{{zone.id_zone}}">{{device.zone_name}}</option>
+                    {% if zone.id_zone == zone_ %}
+                    <option selected value="{{zone.id_zone}}">{{zone.zone_name}}</option>
                     {% else %}
-                    <option value="{{zone.id_zone}}">{{device.zone_name}}</option>
+                    <option value="{{zone.id_zone}}">{{zone.zone_name}}</option>
                     {% endif %}
                   {% endfor %}
                   </select>
             </div>
             
             <div class = "boton_agregar">
-                <button class="btn">Agregar</button>
+                <button class="btn">Actualizar</button>
             </div>
         </form>
     </div>
