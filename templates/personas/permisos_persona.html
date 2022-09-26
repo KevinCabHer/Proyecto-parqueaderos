@@ -43,6 +43,34 @@
         <h4>Asignar permisos: </h4>
         <form action="" method="POST">
             {% csrf_token %}
+
+            <div class="mb-3">
+              <select class="form-select" name = "org" aria-label="Site" >
+                  <option selected value="0">organización</option>
+                  {% for o in orgs %}
+                  <option value="{{o.id_org}}">{{o.org_name}}</option>
+                  {% endfor %}
+                  </select>
+          </div>
+
+          <div class="mb-3">
+            <select class="form-select" name = "org" aria-label="Site" >
+                <option selected value="0">Sitio</option>
+                {% for o in orgs %}
+                <option value="{{o.id_org}}">{{o.org_name}}</option>
+                {% endfor %}
+                </select>
+          </div>
+
+          <div class="mb-3">
+            <select class="form-select" name = "org" aria-label="Site" >
+                <option selected value="0">Zona</option>
+                {% for o in orgs %}
+                <option value="{{o.id_org}}">{{o.org_name}}</option>
+                {% endfor %}
+                </select>
+          </div>
+
             <div class="input-group-text" style = "background-color: white;">
               <input type="checkbox" aria-label="Checkbox for following text input" style="margin: 10px;">
               <label style="margin: 10px;"> Visualizar</label>
@@ -58,8 +86,8 @@
               <label style="margin: 10px;"> Eliminar</label>
             </div>
 
-            <div class = "boton">
-              <button class="btn btn-outline-primary">Guardar</button>
+            <div class = "boton_agregar" style="margin-top: 20px;">
+              <button class="btn">Guardar</button>
             </div>
            
         </form>
