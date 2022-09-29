@@ -276,15 +276,19 @@ def guardar_modificar_permiso(request, id_persona, id_permiso):
     zone    = request.POST.get('zone') 
     level   = request.POST.get('permiso')
     
-    org_ = models.tb_org.objects.get(id_org = org)
-    site_ = models.tb_sites.objects.get(id_site = site)
-    zone_ = models.tb_zones.objects.get(id_zone = zone)
+    org_    = models.tb_org.objects.get(id_org = org)
+    site_   = models.tb_sites.objects.get(id_site = site)
+    zone_   = models.tb_zones.objects.get(id_zone = zone)
     people_ = models.tb_people.objects.get(email_people = id_persona)
     
-    permiso = models.tb_permissions(email_people = people_, id_org = org_, id_site = site_, id_zone = zone_, level = level)
-    permiso.save()
+    permiso         = models.tb_permissions.objects.get(id_permission = id_permiso)
+    permiso.id_org  = org_
+    permiso.id_site = site_
+    permiso.id_zone = zone_
+    permiso.level   = level
     
-    #print('aca andamos pa', id_persona)
+    permiso.save()
+
     return redirect('permisos_persona', id_persona)
 
 # Envia al formulario para asignar nuevos permisos a una persona
