@@ -58,17 +58,24 @@ def tabs_organizacion(request, id_org):
         device = models.tb_devices.objects.select_related('id_cpu', 'id_os', 'id_device_type').filter(id_zone = id)
         devices[id] = device
     
-    context = {
-        "org": organizaciones,
-        "people": personas,
-        "zonas": zonas,
-        "sites": sites,
-        "devices": devices
-    }
+    context = { "org": organizaciones,
+                "people": personas,
+                "zonas": zonas,
+                "sites": sites,
+                "devices": devices, 
+                "id_org":id_org}
     
     return render(request, 'organizaciones/tabs_organizacion.html', context)
 
-
+def eliminar_persona_org(request, id_persona, id_org):
+    none_org = models.tb_org.objects.get(id_org = 9)
+    persona = models.tb_people.objects.get(email_people = id_persona)
+    persona.id_org = none_org
+    persona.save()
+    print("estoy eliminando a: ")
+    print(id_persona)
+    print(id_org)
+    return redirect('tabs_organizacion', id_org)
 
 def agregar_organizacion(request):    
     context = {}

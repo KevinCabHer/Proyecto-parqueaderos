@@ -52,8 +52,7 @@ class tb_zones(models.Model):
     class Meta:
         
         managed = True
-        db_table = 'Tb_Zones'
-        
+        db_table = 'Tb_Zones'       
 
 # Tabla de Equipos   
 class tb_devices(models.Model):
@@ -159,3 +158,18 @@ class tb_permissions(models.Model):
     class Meta:
         managed = True
         db_table = 'Tb_Permissions'
+        
+class tb_permissions_app(models.Model):
+    id_permission_app = models.AutoField(db_column='IdPermissionApp', primary_key=True)
+    name_app          = models.CharField(db_column = 'NameApp', max_length=100, blank=True, null=True)
+    email_people      = models.ForeignKey('tb_people', on_delete=models.CASCADE, db_column='EmailPeople')
+    level             = models.IntegerField(db_column="Level", blank=True, null=True)
+    
+    def __str__(self):
+        return self.name_app
+    
+    class Meta:
+        managed = True
+        db_table = 'Tb_Permissions_App'
+        
+    

@@ -9,6 +9,7 @@ urlpatterns = [
     path('form_organizacion/', views.agregar_organizacion, name = "form_organizacion"),
     path('buscar_org/', views.buscar_organizacion, name = "buscar_organizacion"), 
     path('agregar_org/', views.agregar_org, name = "agregar_org"),
+    path('eliminar_personas_org/<str:id_persona>/<int:id_org>/', views.eliminar_persona_org, name="eliminar_persona_org"),
     
     #sitios
     path('sitios/', views.sitios, name = "sitios"),

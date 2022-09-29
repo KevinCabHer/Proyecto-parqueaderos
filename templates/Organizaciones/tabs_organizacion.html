@@ -124,11 +124,13 @@
                       <tbody>
                       {% for p in people %}
                       <tr>
-                        <th scope="row" style="text-align: center;">{{ p.name_people }}</th>
-                        <td align="center">{{p.email_people}}</td>
-                        <td align="center">
-                          <button type="button" class="btn btn-outline-primary">Modificar</button>
-                          <button type="button" class="btn btn-outline-danger">Eliminar</button>
+                        <td align="left">{{ p.name_people }}</th>
+                        <td align="left">{{p.email_people}}</td>
+                        <td align="center" > 
+                          <form action="{% url 'eliminar_persona_org' p.email_people id_org %}" method="POST" style="margin:1px;"> 
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger">Eliminar</button>
+                          </form>
                         </td>
                       </tr>
                       {% endfor %}
