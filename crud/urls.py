@@ -25,6 +25,11 @@ urlpatterns = [
     path('actualizar_persona/<str:id_persona>/', views.actualizar_persona, name = "actualizar_persona"),
     path('update_persona/<str:id_persona>/', views.update_persona, name = "update_persona"),
     path('permisos_persona/<str:id_persona>/', views.permisos_persona, name = "permisos_persona"),
+    path('eliminar_permiso/<str:id_persona>/<int:id_permiso>/', views.eliminar_permiso, name="eliminar_permiso"),
+    path('modificar_permiso/<str:id_persona>/<int:id_permiso>/', views.modificar_permiso, name="modificar_permiso"),
+    path('formulario_permisos/<str:id_persona>/', views.formulario_permisos, name = "formulario_permisos"),
+    path('guardar_permiso/<str:id_persona>', views.guardar_permiso, name="guardar_permiso"),
+    path('guardar_modificar_permiso/<str:id_persona>/<int:id_permiso>', views.guardar_modificar_permiso, name = "guardar_modificar_permiso"),
     
     #Dispositivos
     path('dispositivos/', views.dispositivos, name = "dispositivos"),

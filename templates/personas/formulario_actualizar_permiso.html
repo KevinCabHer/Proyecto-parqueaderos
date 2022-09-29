@@ -41,23 +41,30 @@
 <div class="contenedor" style="margin-bottom: 30px;">
     <div class="contenedor_form">
         <h4>Asignar permiso </h4>
-        <form action="{% url 'guardar_permiso' email  %}" method="POST">
+        <form action="{% url 'guardar_modificar_permiso' email id_permiso  %}" method="POST">
             {% csrf_token %}
-
             <div class="mb-3">
               <select class="form-select" name = "org" aria-label="Site" >
-                  <option selected value="0">organización</option>
-                  {% for o in org %}
-                  <option value="{{o.id_org}}">{{o.org_name}}</option>
+                <option value="0">organización</option>
+                  {% for o in orgs %}
+                    {% if o.id_org == org.id_org %}
+                      <option selected value="{{o.id_org}}">{{o.org_name}}</option>
+                      {% else %}
+                      <option value="{{o.id_org}}">{{o.org_name}}</option>
+                    {% endif %}
                   {% endfor %}
-                  </select>
-          </div>
+              </select>
+            </div>
 
           <div class="mb-3">
             <select class="form-select" name = "site" aria-label="Site" >
                 <option selected value="0">Sitio</option>
                 {% for o in sites %}
-                <option value="{{o.id_site}}">{{o.site_name}}</option>
+                  {% if o.id_site == site.id_site %}
+                    <option selected value="{{o.id_site}}">{{o.site_name}}</option>
+                  {% else %}
+                    <option value="{{o.id_site}}">{{o.site_name}}</option>
+                  {% endif %}
                 {% endfor %}
                 </select>
           </div>
@@ -66,24 +73,40 @@
             <select class="form-select" name = "zone" aria-label="Site" >
                 <option selected value="0">Zona</option>
                 {% for o in zones %}
-                <option value="{{o.id_zone}}">{{o.zone_name}}</option>
+                  {% if o.id_zone == zone.id_zone %}
+                    <option selected value="{{o.id_zone}}">{{o.zone_name}}</option>
+                  {% else %}
+                    <option value="{{o.id_zone}}">{{o.zone_name}}</option>
+                  {% endif %}
                 {% endfor %}
                 </select>
           </div>
 
             <div class = container style = "width: 200px;">
             <div class="input-group-text" style = "background-color: white; ">
-              <input name="permiso" type="radio" style="margin: 10px;" value=1>
+              {% if var == 1 %}
+                <input checked name="permiso" type="radio" style="margin: 10px;" value=1>
+              {% else %}
+                <input name="permiso" type="radio" style="margin: 10px;" value=1>
+              {% endif %}
               <label style="margin: 10px;"> Visualizar</label>
             </div>
 
             <div class="input-group-text" style = "background-color: white;">
-              <input name="permiso" type="radio" style="margin: 10px;" value=2>
+              {% if var == 2 %}
+                <input checked name="permiso" type="radio" style="margin: 10px;" value=2>
+                {% else %}
+                <input name="permiso" type="radio" style="margin: 10px;" value=2>
+              {% endif %}
               <label style="margin: 10px;"> Modificar</label>
             </div>
 
             <div class="input-group-text" style = "background-color: white;">
-              <input name="permiso" type="radio" style="margin: 10px;" value=3>
+              {% if var == 3 %}
+                <input checked name="permiso" type="radio" style="margin: 10px;" value=3>
+                {% else %}
+                <input name="permiso" type="radio" style="margin: 10px;" value=3>
+              {% endif %}
               <label style="margin: 10px;"> Eliminar</label>
             </div>
 

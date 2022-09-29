@@ -1,5 +1,6 @@
 from multiprocessing import context
 import re
+from statistics import mode
 from sys import orig_argv
 from django.shortcuts import render, HttpResponse, redirect
 from . import models
@@ -227,7 +228,6 @@ def update_persona(request, id_persona):
         
     # En caso contrario se actualiza org y name
     else:
-        print("entre aca")
         id_org = models.tb_org.objects.get(id_org = org)
         persona.id_org = id_org
         persona.name_people = name
@@ -240,18 +240,82 @@ def permisos_persona(request, id_persona):
     
     persona = models.tb_people.objects.get(email_people = id_persona)
     permisos = models.tb_permissions.objects.filter(email_people = id_persona)
-    context = {"permisos": permisos, "persona":persona.name_people}
+    context = {"permisos": permisos, "persona":persona.name_people, "email":id_persona}
    
     return render(request, 'personas/permisos_persona.html', context)
 
-# Eliminar permiso
+def eliminar_permiso(request, id_persona, id_permiso):
+    
+    permiso = models.tb_permissions.objects.get(id_permission = id_permiso)
+    permiso.delete()
+
+    return redirect('permisos_persona', id_persona)
+    
+def modificar_permiso(request, id_persona, id_permiso):
+    
+    orgs = models.tb_org.objects.all()
+    sites = models.tb_sites.objects.all()
+    zones = models.tb_zones.objects.all()
+        
+    permiso = models.tb_permissions.objects.get(id_permission = id_permiso)
+    
+    org_ = models.tb_org.objects.get(org_name = permiso.id_org)
+    site_ = models.tb_sites.objects.get(site_name = permiso.id_site)
+    zone_ = models.tb_zones.objects.get(zone_name = permiso.id_zone)
+
+    var = permiso.level
+    
+    context = {"orgs":orgs, "sites":sites, "zones":zones, "permiso":permiso, "org":org_, "site":site_, "zone":zone_, "var":var, "email": id_persona, "id_permiso":id_permiso}
+    
+    return render(request, 'personas/formulario_actualizar_permiso.html', context)
+
+def guardar_modificar_permiso(request, id_persona, id_permiso):
+    
+    org     = request.POST.get('org')
+    site    = request.POST.get('site')
+    zone    = request.POST.get('zone') 
+    level   = request.POST.get('permiso')
+    
+    org_ = models.tb_org.objects.get(id_org = org)
+    site_ = models.tb_sites.objects.get(id_site = site)
+    zone_ = models.tb_zones.objects.get(id_zone = zone)
+    people_ = models.tb_people.objects.get(email_people = id_persona)
+    
+    permiso = models.tb_permissions(email_people = people_, id_org = org_, id_site = site_, id_zone = zone_, level = level)
+    permiso.save()
+    
+    #print('aca andamos pa', id_persona)
+    return redirect('permisos_persona', id_persona)
 
 # Envia al formulario para asignar nuevos permisos a una persona
-def formulario_permisos_persona(request, id_persona):
+def formulario_permisos(request, id_persona):
     
-    context = {}
+    org = models.tb_org.objects.all()
+    sites = models.tb_sites.objects.all()
+    zones = models.tb_zones.objects.all()
     
-    return render(request, 'personas/formulario_permisos_personas.html', context)
+    #print(id_persona)
+    context = {"org":org, "sites":sites, "zones":zones, "email": id_persona}
+    
+    return render(request, 'personas/formulario_permisos_persona.html', context)
+
+# Guarda el permiso asignado el id de la persona
+def guardar_permiso(request, id_persona):
+    
+    org     = request.POST.get('org')
+    site    = request.POST.get('site')
+    zone    = request.POST.get('zone') 
+    level   = request.POST.get('permiso')
+    
+    org_ = models.tb_org.objects.get(id_org = org)
+    site_ = models.tb_sites.objects.get(id_site = site)
+    zone_ = models.tb_zones.objects.get(id_zone = zone)
+    people_ = models.tb_people.objects.get(email_people = id_persona)
+    
+    permiso = models.tb_permissions(email_people = people_, id_org = org_, id_site = site_, id_zone = zone_, level = level)
+    permiso.save()
+    
+    return redirect('permisos_persona', id_persona)
 
 #---------------------#
 #     Dispositivos    #
